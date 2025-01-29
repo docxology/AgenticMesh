@@ -1,0 +1,43 @@
+agent:
+  name: brodagroupsoftware:agent-bank-identity-verification
+  purpose: |
+    This agent is an expert in verifying the identity of customer
+  description: |
+    This agent will verify the identity of a customer to ensure that the customer
+    is who they say they are.
+  module: tools.brodagroupsoftware.agent.tool
+  url: http://agent-bank-identity-verification:8000
+  version: v0.0.1
+  approach: |
+    The following steps are required to perform this process:
+    1. Identify the identify verification tool.   The tool for this is 'tool.bank.identity_verification'
+    2. Execute the tool to certify the identity of the customer
+  parameters:
+    - name: customer_name
+      type: string
+      description: "The name of the customer"
+  tools:
+    - name: tool.llm
+      purpose: To think, determine task plans
+      description: Process natural language requests using a Large Language Model
+      module: tools.brodagroupsoftware.llm.tool
+    - name: tool.bank.identity_verification
+      purpose: Verify customer identity
+      description: Verify customer identity
+      module: tools.brodagroupsoftware.bank.identity_verification
+  agents: []
+  logging: INFO
+
+registry:
+  # host: localhost
+  host: xagenticmesh-registry
+  port: 8000
+  retry_interval: 10  # seconds
+  refresh_timeout: 300
+
+monitor:
+  # host: localhost
+  host: xagenticmesh-monitor
+  port: 8000
+  retry_interval: 10  # seconds
+  refresh_timeout: 15

@@ -1,0 +1,51 @@
+agent:
+  name: brodagroupsoftware:agent-bank-account-open
+  purpose: |
+    This agent is an expert in bank account opening.
+  description: |
+    This agent can coordinate the end-to-end account open process in a bank.
+  module: tools.brodagroupsoftware.agent.tool
+  url: http://agent-bank-account-open:8000
+  version: v0.0.1
+  approach: |
+    The following steps are required to perform this process:
+    1. Verify the identity of the customer.  The agent for this is 'brodagroupsoftware:agent-bank-identity-verification'
+    2. Complete a KYC (know your customer) process to understand the customer's profile. The agent for this is 'brodagroupsoftware:agent-bank-kyc'
+    3. Make an initial deposit into the account. The agent for this is 'brodagroupsoftware:agent-bank-initial-deposit'
+    4. Notify the customer of the completed process. The agent for this is 'brodagroupsoftware:agent-bank-notification'
+  parameters:
+    - name: customer_name
+      type: string
+      description: "The name of the customer"
+    - name: amount
+      type: float
+      description: "The deposit amount"
+  tools:
+    - name: tool.llm
+      purpose: To think, determine task plans
+      description: Process natural language requests using a Large Language Model
+      module: tools.brodagroupsoftware.llm.tool
+    - name: tool.math
+      purpose: To do math
+      description: Calculate math expression
+      module: tools.brodagroupsoftware.math.tool
+  agents:
+    - .*agent-bank-identity-verification.*
+    - .*agent-bank-initial-deposit.*
+    - .*agent-bank-kyc.*
+    - .*agent-bank-notification.*
+  logging: INFO
+
+registry:
+  # host: localhost
+  host: xagenticmesh-registry
+  port: 8000
+  retry_interval: 10  # seconds
+  refresh_timeout: 300
+
+monitor:
+  # host: localhost
+  host: xagenticmesh-monitor
+  port: 8000
+  retry_interval: 10  # seconds
+  refresh_timeout: 15
