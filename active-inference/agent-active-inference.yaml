@@ -1,222 +1,110 @@
 agent:
-  name: active-inference-agent
+  name: active-inference-simulation
   purpose: |
-    This agent provides a complete Active Inference framework for decision-making under uncertainty.
-    It specializes in:
-    1. Belief updating through variational free energy (F) minimization
-    2. Action selection through expected free energy (G) minimization
-    3. Habit learning and adaptation over time
-    4. Handling partially observable environments (POMDPs)
-    5. Balancing exploration and exploitation
-    Perfect for tasks requiring adaptive decision-making, learning from experience, and handling uncertainty.
+    Simulates interactions between an Active Inference agent and environment.
+    Provides:
+    1. Environment simulation with three discrete states
+    2. Active Inference agent interaction
+    3. Comprehensive logging and visualization
+    4. Performance analysis and monitoring
   description: |
-    A sophisticated Active Inference implementation that combines perception, learning, and decision-making
-    in a unified free energy minimization framework. Key capabilities include:
+    A simulation tool that coordinates interaction between an Active Inference agent
+    and a simulated environment. Features include:
     
-    - Perception: Updates beliefs about hidden states using variational free energy (F)
-    - Planning: Selects actions by minimizing expected free energy (G)
-    - Learning: Adapts habits (policy priors) based on experience
-    - Exploration: Automatically balances information-seeking and goal-directed behavior
-    - Validation: Ensures proper probability distributions and numerical stability
-    - Monitoring: Tracks beliefs, actions, free energies, and habits over time
+    - Environment: Three-state system (Low, Medium, High)
+    - Agent: Active Inference implementation with belief updating and action selection
+    - Logging: Detailed JSON logging of all interactions and metrics
+    - Visualization: Comprehensive analysis of agent behavior
     
     Ideal for:
-    - Robotic control and planning
-    - Adaptive decision-making systems
-    - Reinforcement learning tasks
-    - Cognitive modeling
-    - Any system requiring principled uncertainty handling
-  module: tools.brodagroupsoftware.active_inference.tool
-  url: http://active-inference-agent:8000
+    - Testing Active Inference implementations
+    - Analyzing agent behavior
+    - Validating decision-making processes
+    - Generating visualization datasets
   version: "1.0.0"
-  approach: |
-    The agent follows a precise Active Inference cycle:
-    1. Initialize POMDP Model (first call)
-       - Load and validate all matrices (A, B, C, D, E)
-       - Verify probability distributions
-       - Set up monitoring and history tracking
-       - Initialize beliefs with prior D
-       - Set up habit matrix E
 
-    2. Perception Phase
-       - Receive current observation
-       - Compute variational free energy F
-       - Update beliefs through F minimization
-       - Track belief updates and free energy
-
-    3. Action Selection Phase
-       - Compute expected free energy G for each action
-         * G = Epistemic Value + Pragmatic Value
-         * Epistemic: Expected information gain about states
-         * Pragmatic: Alignment with preferences
-       - Update habit preferences E
-
-    4. Execution and Monitoring
-       - Select optimal action
-       - Update histories and metrics
-       - Return complete state information
-       - Track performance metrics
-
-    5. Collaboration Interface
-       - Provide belief state to other agents
-       - Share learned habits if requested
-       - Accept preference updates
-       - Enable multi-agent coordination
-  parameters:
-    - name: n_states
-      type: integer
-      description: Number of discrete states in the POMDP
-      required: true
-      validation: "Must be positive integer"
-    - name: n_observations
-      type: integer
-      description: Number of possible observations
-      required: true
-      validation: "Must be positive integer"
-    - name: n_actions
-      type: integer
-      description: Number of possible actions
-      required: true
-      validation: "Must be positive integer"
-    - name: likelihood_matrix
-      type: array
-      description: Likelihood matrix A mapping states to observations (shape: [n_observations, n_states])
-      required: true
-      validation: "Must sum to 1 along observation axis"
-    - name: transition_matrix
-      type: array
-      description: Transition matrix B defining state dynamics under actions (shape: [n_states, n_states, n_actions])
-      required: true
-      validation: "Must sum to 1 along first state axis"
-    - name: preferences
-      type: array
-      description: Prior preferences C over observations (shape: [n_observations])
-      required: true
-      validation: "Can be any real values (will be used in expected free energy calculation)"
-    - name: initial_beliefs
-      type: array
-      description: Initial belief distribution D over states (shape: [n_states])
-      required: true
-      validation: "Must sum to 1"
-    - name: habit_matrix
-      type: array
-      description: Habit matrix E defining prior preferences over actions/policies (shape: [n_actions])
-      required: false
-      validation: "Must be non-negative and will be normalized to sum to 1"
-    - name: exploration_temperature
-      type: float
-      description: Temperature parameter τ for softmax exploration in action selection
-      required: false
-      default: 1.0
-      validation: "Must be positive"
-    - name: novelty_weight
-      type: float
-      description: Weight η for information gain term in expected free energy
-      required: false
-      default: 0.1
-      validation: "Must be non-negative"
-    - name: exploration_noise
-      type: float
-      description: Amount of exploration noise ε to add to habit updates
-      required: false
-      default: 0.01
-      validation: "Must be in range [0, 1]"
-    - name: temperature
-      type: float
-      description: Softmax temperature for action selection
-      required: false
-      default: 1.0
-      validation: "Must be positive"
-    - name: learning_rate
-      type: float
-      description: Habit learning rate
-      required: false
-      default: 0.1
-      validation: "Must be non-negative"
-    - name: exploration
-      type: float
-      description: Exploration noise
-      required: false
-      default: 0.01
-      validation: "Must be in range [0, 1]"
-  tools:
-    - name: tool.active_inference
-      purpose: Perform Active Inference for POMDPs
-      description: |
-        Implements Active Inference framework with:
-        - Free energy minimization for belief updating
-        - Expected free energy minimization for action selection
-        - History tracking of beliefs, actions, and free energies
-        - Comprehensive parameter validation
-        - Numerical stability features
-      module: tools.brodagroupsoftware.active_inference.tool
-      parameters:
-        - name: observation
-          type: integer
-          description: Current observation index (required for belief updating after initialization)
-          required: false
-          validation: "Must be in range [0, n_observations)"
-      returns:
-        - name: beliefs
-          type: array
-          description: Current belief distribution over states
-        - name: selected_action
-          type: integer
-          description: Selected action index
-        - name: expected_free_energy
-          type: array
-          description: Expected free energy for each possible action
-        - name: policy_prior
-          type: array
-          description: Current habit distribution over actions (updated E matrix)
-        - name: history
-          type: object
-          description: |
-            Complete history including:
-            - belief_history: List of belief distributions
-            - action_history: List of selected actions
-            - free_energy_history: List of free energy values
-            - policy_prior_history: List of habit distributions
-
-model:
-  dimensions:
-    n_states: 3        # Low, Medium, High
-    n_observations: 3  # Matches states
-    n_actions: 3       # Decrease, Stay, Increase
-
-  parameters:
-    temperature: 1.0   # Softmax temperature for action selection
-    learning_rate: 0.1 # Habit learning rate
-    exploration: 0.01  # Exploration noise
-
-  matrices:
+simulation:
+  environment:
+    states: ["Low", "Medium", "High"]
+    observations: ["Low", "Medium", "High"]
+    actions: ["Decrease", "Stay", "Increase"]
+    
+  agent:
+    # Initial model parameters
+    n_states: 3
+    n_observations: 3
+    n_actions: 3
+    
     # Observation model P(o|s)
-    likelihood:
-      shape: [n_observations, n_states]
-      initialization: "identity"  # Start with perfect observations
+    likelihood_matrix:
+      shape: [3, 3]
+      values: [
+        [0.8, 0.2, 0.0],  # P(o=Low|s)
+        [0.1, 0.8, 0.1],  # P(o=Medium|s)
+        [0.0, 0.2, 0.8]   # P(o=High|s)
+      ]
     
     # Transition dynamics P(s'|s,a)
-    transition:
-      shape: [n_states, n_states, n_actions]
-      initialization: "uniform"   # Learn from experience
+    transition_matrices:
+      shape: [3, 3, 3]
+      decrease_action: [
+        [0.8, 0.2, 0.0],  # From Low
+        [0.7, 0.3, 0.0],  # From Medium
+        [0.1, 0.8, 0.1]   # From High
+      ]
+      stay_action: [
+        [0.7, 0.3, 0.0],  # From Low
+        [0.2, 0.6, 0.2],  # From Medium
+        [0.0, 0.3, 0.7]   # From High
+      ]
+      increase_action: [
+        [0.1, 0.8, 0.1],  # From Low
+        [0.0, 0.3, 0.7],  # From Medium
+        [0.0, 0.2, 0.8]   # From High
+      ]
     
-    # Preferences over observations
-    preferences:
-      shape: [n_observations]
-      initialization: "custom"
-      values: [0.8, 0.2, 0.0]    # Prefer low state
-    
-    # Initial beliefs
-    initial_beliefs:
-      shape: [n_states]
-      initialization: "uniform"   # Start with uncertainty
-    
-    # Action habits
-    habits:
-      shape: [n_actions]
-      initialization: "uniform"   # No initial preference
+    # Preferences and initial beliefs
+    preferences: [0.1, 2.0, 0.1]  # Preference for medium state
+    initial_beliefs: [0.333, 0.333, 0.333]  # Uniform initial distribution
+    initial_habits: [0.333, 0.333, 0.333]  # Uniform action preferences
+
+logging:
+  format: "json"
+  fields:
+    - timestamp
+    - level
+    - logger
+    - message
+    - component
+    - event
+    - step
+    - observation
+    - action
+    - beliefs
+    - free_energy
+    - policy
+    - timing
+  
+  metrics:
+    - belief_history
+    - action_history
+    - free_energy_history
+    - policy_prior_history
+    - epistemic_values
+    - pragmatic_values
 
 visualization:
+  plots:
+    - belief_evolution
+    - policy_evolution
+    - free_energy_analysis
+    - state_action_analysis
+    - belief_phase_space
+    - value_components
+    - summary_dashboard
+    - exploration_exploitation
+    - action_selection_dynamics
+    
   styles:
     colors:
       states: ["#2ecc71", "#3498db", "#e74c3c"]  # Green, Blue, Red
@@ -229,42 +117,8 @@ visualization:
       labelsize: 14
       markersize: 6
       linewidth: 2
-    
-    layout:
-      use_constrained: true
-      suptitle_pad: 20
-      legend_fontsize: 12
-
-  outputs:
-    directory: "visualizations"
-    formats:
-      - belief_evolution
-      - policy_evolution
-      - free_energy_analysis
-      - state_action_analysis
-      - belief_phase_space
-      - summary_dashboard
-
-logging:
-  level: "INFO"
-  directory: "logs"
-  format: "json"
-  fields:
-    - timestamp
-    - step
-    - beliefs
-    - policy
-    - free_energy
-    - action
-    - observation
 
 execution:
   max_steps: 100
   save_history: true
   async_visualization: true
-
-registry:
-  host: xagenticmesh-registry
-  port: 8000
-  max_retries: 100
-  retry_delay: 10  # seconds

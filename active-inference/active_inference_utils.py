@@ -60,7 +60,7 @@ class ActiveInferenceUtils:
             raise ValueError(f"Invalid transition matrix shape: {matrices['transition'].shape}")
         if not np.allclose(matrices['transition'].sum(axis=1), 1):
             raise ValueError("Transition matrix must sum to 1 along second dimension")
-        
+
         # Check preferences
         if matrices['preferences'].shape != (n_observations,):
             raise ValueError(f"Invalid preferences shape: {matrices['preferences'].shape}")
@@ -99,4 +99,30 @@ class ActiveInferenceUtils:
         """Compute softmax with temperature"""
         x = x / temperature
         exp_x = np.exp(x - np.max(x))  # Subtract max for numerical stability
-        return exp_x / exp_x.sum() 
+        return exp_x / exp_x.sum()
+
+    @staticmethod
+    def setup_monitoring() -> Dict[str, List]:
+        """Initialize monitoring metrics and history tracking.
+        
+        Returns:
+            Dict containing empty lists for tracking various metrics:
+            - belief_history: List of belief states over time
+            - action_history: List of selected actions
+            - free_energy_history: List of free energy values
+            - policy_prior_history: List of policy priors
+            - observation_history: List of observations
+            - state_history: List of true states (if available)
+            - epistemic_values: List of epistemic values for each action
+            - pragmatic_values: List of pragmatic values for each action
+        """
+        return {
+            'belief_history': [],
+            'action_history': [],
+            'free_energy_history': [],
+            'policy_prior_history': [],
+            'observation_history': [],
+            'state_history': [],
+            'epistemic_values': [],
+            'pragmatic_values': []
+        }

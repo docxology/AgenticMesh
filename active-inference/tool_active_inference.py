@@ -89,7 +89,7 @@ class ActiveInferenceTool(ToolComponent):
         ]).T
         
         # C matrix: Preferences over observations (slight preference for medium state)
-        self.C = np.array([-0.1, 1.0, -0.1])
+        self.C = np.array([0.1, 2.0, 0.1])
         
         # D matrix: Initial beliefs (start with uniform distribution)
         self.D = np.ones(self.n_states) / self.n_states
@@ -281,6 +281,8 @@ class ActiveInferenceTool(ToolComponent):
             Expected free energy for each possible action
         """
         G = np.zeros(self.n_actions)
+        epistemic_values = np.zeros(self.n_actions)
+        pragmatic_values = np.zeros(self.n_actions)
         epsilon = 1e-16  # Numerical stability constant
         
         for a in range(self.n_actions):
@@ -295,15 +297,21 @@ class ActiveInferenceTool(ToolComponent):
             predicted_state_entropy = -(predicted_states * np.log(predicted_states + epsilon)).sum()
             current_entropy = -(self.beliefs * np.log(self.beliefs + epsilon)).sum()
             epistemic_value = predicted_state_entropy - current_entropy
+            epistemic_values[a] = epistemic_value
             
             # 2. Pragmatic Value (Preference Alignment)
             # KL divergence between expected observations and preferences
             normalized_pref = np.exp(self.C) / (np.exp(self.C).sum() + epsilon)
             pragmatic_value = -(expected_obs * np.log(normalized_pref + epsilon)).sum()
+            pragmatic_values[a] = pragmatic_value
             
             # Combine values (negative because we want to maximize epistemic value and minimize pragmatic cost)
             G[a] = -epistemic_value + pragmatic_value
-            
+        
+        # Store values for logging
+        self.metrics['epistemic_values'].append(epistemic_values.tolist())
+        self.metrics['pragmatic_values'].append(pragmatic_values.tolist())
+        
         return G
 
     def _update_policy_prior(self, G: np.ndarray):
@@ -409,6 +417,10 @@ class ActiveInferenceTool(ToolComponent):
             action, policy_posterior, G, policy_prior = self._select_action()
             self.prev_action = action
             
+            # Get the latest epistemic and pragmatic values
+            latest_epistemic = self.metrics['epistemic_values'][-1] if self.metrics['epistemic_values'] else None
+            latest_pragmatic = self.metrics['pragmatic_values'][-1] if self.metrics['pragmatic_values'] else None
+            
             # Prepare detailed output
             output = {
                 "observation": observation,
@@ -418,6 +430,8 @@ class ActiveInferenceTool(ToolComponent):
                 "policy_prior": policy_prior.tolist(),
                 "policy_posterior": policy_posterior.tolist(),
                 "expected_free_energy": G.tolist(),
+                "epistemic_values": latest_epistemic,
+                "pragmatic_values": latest_pragmatic,
                 "selected_action": int(action),
                 "selected_action_name": self.action_mapping[action],
                 "history": self.get_history()
@@ -436,6 +450,8 @@ class ActiveInferenceTool(ToolComponent):
                 "policy_prior": [f"{p:.3f}" for p in policy_prior],
                 "policy_posterior": [f"{p:.3f}" for p in policy_posterior],
                 "expected_free_energy": [f"{g:.3f}" for g in G],
+                "epistemic_values": [f"{e:.3f}" for e in latest_epistemic] if latest_epistemic else None,
+                "pragmatic_values": [f"{p:.3f}" for p in latest_pragmatic] if latest_pragmatic else None,
                 "selected_action": self.action_mapping[action]
             }
             logger.info(json.dumps(log_data))

@@ -63,7 +63,7 @@ def setup_logging(log_dir: str = "logs"):
     
     return logger
 
-async def run_demo(n_steps: int = 100):
+async def run_demo(n_steps: int = 50):
     """Run a demo of the environment and active inference agent interaction."""
     logger = logging.getLogger(__name__)
     
