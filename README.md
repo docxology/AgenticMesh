@@ -56,7 +56,7 @@ The generative model uses the standard matrices — `A` likelihood, `B` transiti
 | File | Role |
 |---|---|
 | `tool_active_inference.py` | The agent: belief updating by variational free energy, action selection, habit learning, state management |
-| `tool_actinf_visualization.py` | Six diagnostics — belief evolution, policy development, free energy analysis, state-action transitions, belief phase space, and a summary dashboard |
+| `tool_actinf_visualization.py` | Nine diagnostics — belief evolution, policy development, free energy/value analysis, state-action transitions, belief phase space, exploration, action selection, and a summary dashboard |
 | `tool_environment.py` | The environment the agent acts in |
 | `tool_simulation_active_inference.py` | Drives a simulation run end to end |
 | `agent-active-inference.yaml` | Model dimensions and matrices |
@@ -68,9 +68,12 @@ Each run writes a JSON log and a `visualizations/run_<TIMESTAMP>/` directory of 
 
 ```bash
 pip install -r active-inference/requirements.txt
+cd active-inference
+python3 tool_simulation_active_inference.py
+python3 tool_actinf_visualization.py
 ```
 
-Requires NumPy, SciPy, Pandas, Matplotlib, Seaborn, and NetworkX. See `active-inference/ActiveInference_README.md` for the agent's parameters and how to invoke a run.
+Requires NumPy, SciPy, Pandas, Matplotlib, Seaborn, NetworkX, and PyYAML. See `active-inference/ActiveInference_README.md` for the agent's parameters and direct-call examples.
 
 ## Status
 

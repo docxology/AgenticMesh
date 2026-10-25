@@ -2,7 +2,7 @@
 
 Human entry point for repository documentation. Facts below come from the repo
 root `README.md`, `active-inference/ActiveInference_README.md`, and source
-inspection (2026-08-29).
+inspection.
 
 ## What this repo is
 
@@ -25,13 +25,14 @@ worked Active Inference agent built on top of that contract in
 
 ## How to run / test
 
-Not documented in repo — needs owner input. No pyproject.toml, Makefile,
-package.json, or test suite was found. The agent subproject's dependencies are
-listed in `active-inference/requirements.txt` (numpy, scipy, pandas,
-python-dateutil). The subproject README (`active-inference/ActiveInference_README.md`)
-describes the agent components (`tool_active_inference.py`,
-`tool_actinf_visualization.py`, `tool_environment.py`,
-`tool_simulation_active_inference.py`) but no entry-point command.
+```bash
+pip install -r active-inference/requirements.txt
+cd active-inference
+python3 tool_simulation_active_inference.py
+python3 tool_actinf_visualization.py
+```
+
+No dedicated test suite, packaging metadata, or CI configuration is committed. Use `python3 -m compileall . active-inference` as the repository syntax smoke check.
 
 ## More documentation
 

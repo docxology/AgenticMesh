@@ -7,12 +7,9 @@ from datetime import datetime
 # Add parent directory to Python path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Dict, Any, Tuple
 import numpy as np
 from scipy.special import softmax
-import torch
-import torch.nn.functional as F
-import yaml
 
 from tool_component import ToolComponent
 import models

@@ -48,32 +48,26 @@ Uses YAML-based configuration for:
 
 ### Installation
 ```bash
-pip install numpy scipy pandas matplotlib seaborn networkx
+pip install -r active-inference/requirements.txt
 ```
 
 ### Running the Agent
-```python
-from active_inference_tool import ActiveInferenceTool
-
-# Initialize the agent
-agent = ActiveInferenceTool()
-
-# Configure parameters
-parameters = {
-    "n_states": 3,              # Low, Medium, High
-    "n_observations": 3,        # Matches states
-    "n_actions": 3,             # Decrease, Stay, Increase
-    "likelihood_matrix": A,     # Observation model [n_observations × n_states]
-    "transition_matrix": B,     # State dynamics [n_states × n_states × n_actions]
-    "preferences": C,           # Prior preferences [n_observations]
-    "initial_beliefs": D,       # Initial state distribution [n_states]
-    "habit_matrix": E          # Action preferences [n_actions]
-}
-
-# Initialize and run
-result = await agent.execute("init", parameters)
-next_result = await agent.execute("step", {"observation": current_observation})
+```bash
+cd active-inference
+python3 tool_simulation_active_inference.py
 ```
+
+To call a single agent step from your own async code, run from `active-inference/` or add that directory to `PYTHONPATH`:
+
+```python
+from tool_active_inference import ActiveInferenceTool
+
+agent = ActiveInferenceTool()
+result = await agent.execute("demo", {"observation": 1})
+print(result["selected_action_name"], result["belief_posterior"])
+```
+
+Observations are integer indexes: `0` = Low, `1` = Medium, `2` = High. The simulation script pairs the agent with `EnvironmentTool` and writes logs to `active-inference/logs/`.
 
 ### Generating Visualizations
 ```bash
@@ -92,7 +86,10 @@ Generated files include:
 - `free_energy_analysis.png`: Free energy components
 - `state_action_analysis.png`: Transition patterns
 - `belief_phase_space.png`: Belief trajectories
+- `value_components.png`: Epistemic and pragmatic value components
 - `summary_dashboard.png`: Complete overview
+- `exploration_exploitation.png`: Exploration/exploitation balance
+- `action_selection_dynamics.png`: Action-selection dynamics
 
 ## Implementation Details
 
@@ -113,8 +110,7 @@ Generated files include:
 - Consistent state/action ordering (Low, Medium, High)
 - Professional color schemes
 - Enhanced readability
-- Interactive elements
-- High-resolution output
+- Static high-resolution PNG output
 
 ## Configuration
 

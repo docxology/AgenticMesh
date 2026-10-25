@@ -15,11 +15,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Any
+from typing import Dict, List
 import pandas as pd
-import os
 from matplotlib.gridspec import GridSpec
-from matplotlib.patches import Patch
 import networkx as nx
 import logging
 
