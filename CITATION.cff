@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+type: software
+title: "AgenticMesh"
+authors:
+  - family-names: Friedman
+    given-names: Daniel Ari
+    orcid: "https://orcid.org/0000-0001-6232-9096"
+repository-code: "https://github.com/docxology/AgenticMesh"
+abstract: "Tool-component framework for an Active Inference agentic mesh — an abstract async ToolComponent interface with typed metadata, parameter and return-value dataclasses, plus two worked tools: a sandboxed MathTool and a discrete-POMDP Active Inference agent (A/B/C/D/E matrices, variational free energy, habit learning) with matplotlib diagnostics."
+license: MIT
