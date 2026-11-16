@@ -2,6 +2,8 @@
 
 Two layers: a small, explicit contract for tools that an agent can call, and a worked Active Inference agent built on top of it.
 
+![AgenticMesh Architecture Overview](docs/assets/architecture-overview.svg)
+
 ## The tool contract
 
 `tool_component.py` defines `ToolComponent`, the abstract base every tool implements:
