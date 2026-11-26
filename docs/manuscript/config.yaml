@@ -1,0 +1,28 @@
+paper:
+  title: "AgenticMesh: An Asynchronous Tool Contract and a Discrete Active Inference Example"
+
+authors:
+  - name: "Daniel Ari Friedman"
+    orcid: "0000-0001-6232-9096"
+
+publication:
+  github_repository: docxology/AgenticMesh
+  repository_url: https://github.com/docxology/AgenticMesh
+
+metadata:
+  language: en
+  license: MIT
+
+keywords:
+  - tool contracts
+  - active inference
+  - POMDP
+  - reproducibility
+
+render:
+  formats:
+    pdf: true
+    html: true
+    slides: false
+    docx: false
+    epub: false
