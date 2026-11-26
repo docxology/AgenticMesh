@@ -11,8 +11,8 @@ Two layers, deliberately small:
    `return_value()`, `async execute(iid, parameters)`). `models.py` holds the
    three dataclasses that describe a tool to a caller: `ToolInfoModel`,
    `ToolParameterModel`, `ToolReturnValueModel`.
-2. **A worked agent on top of it.** `tool.py` implements `MathTool`, a sandboxed
-   expression evaluator. `active-inference/` holds a discrete-POMDP Active
+2. **A worked agent on top of it.** `tool.py` implements `MathTool`, a trusted-input
+   arithmetic example. `active-inference/` holds a discrete-POMDP Active
    Inference agent (A/B/C/D/E matrices, variational free energy, habit learning)
    exposed as tools, with matplotlib diagnostics.
 
@@ -37,21 +37,16 @@ repository root, so run and import from here, not from a parent directory.
 
 ## Running
 
-```bash
-pip install -r active-inference/requirements.txt
-python3 active-inference/tool_simulation_active_inference.py
-python3 active-inference/tool_actinf_visualization.py
-```
-
-Each run writes a JSON log and a `visualizations/run_<TIMESTAMP>/` directory of
-PNG figures.
+See the [documentation index](docs/README.md) for the two example workflows
+and [local verification](docs/verification.md) for reproducible checks.
 
 ## Conventions
 
 - New tools implement `ToolComponent` and nothing else. Do not invent a second
   dispatch mechanism; `async execute(iid, parameters)` is the entry point.
-- `MathTool` evaluates expressions. If you extend it, keep the evaluation
-  sandboxed — do not widen it to arbitrary builtins or attribute access.
+- The existing `MathTool` evaluates Python expressions. Only pass trusted
+  arithmetic to it. The documented [backlog](docs/backlog.md) tracks a
+  narrower evaluator.
 - The committed `logs/` and `visualizations/` trees are sample output, not
   fixtures. Regenerating them is expected; deleting them removes the only
   example of what a run produces.
@@ -61,7 +56,6 @@ PNG figures.
 
 ## Verification
 
-No CI and no tests. Verify by running the simulation driver and confirming that
-a new `visualizations/run_<TIMESTAMP>/` directory appears with the expected
-figures, then report which command you ran. Do not describe the POMDP agent as
-validated beyond what you actually executed.
+The [verification guide](docs/verification.md) runs syntax checks, fixed
+arithmetic, one synthetic agent observation, and a pinned manuscript render.
+The archived traces describe a single example run.
